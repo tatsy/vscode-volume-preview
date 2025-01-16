@@ -1,0 +1,77 @@
+{
+  "name": "vscode-volume-preview",
+  "publisher": "tatsy",
+  "displayName": "vscode-volume-preview",
+  "description": "VSCode extension for previewing volume data",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "volume",
+    "raw",
+    "nrrd"
+  ],
+  "activationEvents": [
+    "onCustomEditor:volview.viewer"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "capabilities": {
+      "untrustedWorkspaces": {
+        "supported": true
+      }
+    },
+    "customEditors": [
+      {
+        "viewType": "volview.viewer",
+        "displayName": "Volume Viewer",
+        "selector": [
+          {
+            "filenamePattern": "*.raw"
+          },
+          {
+            "filenamePattern": "*.nrrd"
+          }
+        ]
+      }
+    ]
+  },
+  "configuration": {
+    "title": "VSCode Volume Viewer",
+    "properties": {
+      "volview.backgroundColor": {
+        "type": "string",
+        "default": "#121212",
+        "description": "Default background color."
+      },
+      "volview.fogDensity": {
+        "type": "number",
+        "default": 0,
+        "description": "Fog density."
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.96.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "@typescript-eslint/eslint-plugin": "^8.20.0",
+    "@typescript-eslint/parser": "^8.20.0",
+    "eslint": "^9.18.0",
+    "typescript": "^5.7.3",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1"
+  }
+}
