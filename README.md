@@ -14,9 +14,11 @@ This extension allows the VSCode to visualize the volume data (*.nrrd). The data
 
 This extension currently supports only NRRD format.
 
-#### Mesh preview
+### Screen shots
 
-![mesh](images/stent_preview.jpg)
+![stent](images/stent_preview.jpg)
+
+(The stent data is provided by [ImageIO standard images](https://imageio.readthedocs.io/en/stable/user_guide/standardimages.html))
 
 ## FAQ
 
