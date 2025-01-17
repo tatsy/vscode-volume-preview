@@ -7,6 +7,9 @@ on:
     tags:
       - "v*" # Push events to matching v*, i.e. v1.0, v20.15.10
 
+permissions:
+  contents: write
+
 name: Create Release
 
 jobs:
@@ -36,25 +39,8 @@ jobs:
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags/v')
         id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          body: |
-            Auto release from GitHub action.
+          files: ./vscode-volume-preview-${{ steps.tag_string.outputs.result }}.vsix
           draft: false
           prerelease: false
-
-      - name: Upload Release Asset
-        if: startsWith(github.ref, 'refs/tags/v')
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./vscode-volume-preview-${{ steps.tag_string.outputs.result }}.vsix
-          asset_name: vscode-volume-preview-${{ steps.tag_string.outputs.result }}.vsix
-          asset_content_type: application/vsix
