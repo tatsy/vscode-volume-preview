@@ -31,27 +31,44 @@
         "displayName": "Volume Viewer",
         "selector": [
           {
-            "filenamePattern": "*.raw"
-          },
-          {
             "filenamePattern": "*.nrrd"
           }
         ]
       }
-    ]
-  },
-  "configuration": {
-    "title": "VSCode Volume Viewer",
-    "properties": {
-      "volview.backgroundColor": {
-        "type": "string",
-        "default": "#121212",
-        "description": "Default background color."
-      },
-      "volview.fogDensity": {
-        "type": "number",
-        "default": 0,
-        "description": "Fog density."
+    ],
+    "configuration": {
+      "title": "VSCode Volume Viewer",
+      "properties": {
+        "volview.backgroundColor": {
+          "type": "string",
+          "default": "#121212",
+          "description": "Default background color."
+        },
+        "volview.showGridHelper": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show grid helper."
+        },
+        "volview.defaultColorMap": {
+          "type": "string",
+          "default": "inferno",
+          "description": "Default color map."
+        },
+        "volview.defaultRenderStyle": {
+          "type": "string",
+          "default": "mip",
+          "description": "Default rendering style."
+        },
+        "volview.showAxesHelper": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show axes helper."
+        },
+        "volview.fogDensity": {
+          "type": "number",
+          "default": 0,
+          "description": "Fog density."
+        }
       }
     }
   },

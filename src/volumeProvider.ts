@@ -111,28 +111,19 @@ export class VolumeViewProvider
     const initData = {
       fileToLoad: uri.toString(),
       backgroundColor: config.get("backgroundColor", "#0b1447"),
+      defaultColorMap: config.get("defaultColorMap", "viridis"),
+      defaultRenderStyle: config.get("defaultRenderStyle", "mip"),
+      showGridHelper: config.get("showGridHelper", true),
+      showAxesHelper: config.get("showAxesHelper", true),
       fogDensity: config.get("fogDensity", 0.01),
     };
+    console.log(initData);
     const data = JSON.stringify(initData).replace(/"/g, "&quot;");
     return `<meta id="vscode-volume-data" data-settings="${data}">`;
   }
 
   private getScripts(webview: vscode.Webview, nonce: string): string {
-    const scripts = [
-      // this.getMediaWebviewUri(webview, "three/three.module.min.js"),
-      // this.getMediaWebviewUri(webview, "three/dat.gui.module.js"),
-      // this.getMediaWebviewUri(webview, "three/stats.min.js"),
-      // this.getMediaWebviewUri(webview, "three/BufferGeometryUtils.js"),
-      // this.getMediaWebviewUri(webview, "three/three.module.min.js"),
-      // this.getMediaWebviewUri(webview, "three/controls/OrbitControls.js"),
-      // this.getMediaWebviewUri(webview, "three/controls/TrackballControls.js"),
-      // this.getMediaWebviewUri(webview, "three/misc/VolumeSlice.js"),
-      // this.getMediaWebviewUri(webview, "three/misc/Volume.js"),
-      // this.getMediaWebviewUri(webview, "three/loaders/NRRDLoader.js"),
-      // this.getMediaWebviewUri(webview, "three/shaders/VolumeShader.js"),
-      // this.getMediaWebviewUri(webview, "utils.js"),
-      this.getMediaWebviewUri(webview, "viewer.js"),
-    ];
+    const scripts = [this.getMediaWebviewUri(webview, "viewer.js")];
     return scripts
       .map(
         (source) =>
