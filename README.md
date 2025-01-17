@@ -1,71 +1,35 @@
-# vscode-volume-preview README
+# VSCode Volume Viewer
 
-This is the README for your extension "vscode-volume-preview". After writing up a brief description, we recommend including the following sections.
+[![License: GPL v3](https://img.shields.io/badge/License-GPL3-green.svg)](https://opensource.org/license/gpl-3-0)
+[![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/tatsy.vscode-volume-preview)](https://marketplace.visualstudio.com/items?itemName=tatsy.vscode-volume-preview)
+![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/tatsy.vscode-volume-preview)
+
+**See in VS Marketplace:** [vscode-volume-preview](https://marketplace.visualstudio.com/items?itemName=tatsy.vscode-volume-preview)
+
+## Description
+
+This extension allows the VSCode to visualize the volume data (*.nrrd). The data which can be visualized can be exported by [ImageJ2](https://imagej.net/software/imagej2/) (aka Fiji) or [pynrrd](https://pynrrd.readthedocs.io/en/stable/).
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+This extension currently supports only NRRD format.
 
-For example if there is an image subfolder under your extension project workspace:
+#### Mesh preview
 
-\!\[feature X\]\(images/feature-x.png\)
+![mesh](images/stent_preview.jpg)
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+## FAQ
 
-## Requirements
+* Q. When I drag&drop a mesh file, a blank display is shown.
+    * A. To show a 3D data using this extension, you should first open a workspace including the 3D data that you want to open.
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+## Reference
 
-## Extension Settings
+* [vscode-3d-preview](https://github.com/tatsy/vscode-3d-preview)
+* [vscode-3dviewer](https://github.com/stef-levesque/vscode-3dviewer)
+* [vscode-pc-viewer](https://github.com/Obarads/vscode-pc-viewer)
+* [three.js](https://threejs.org/)
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+## Lincense
 
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+GNU General Public License v3 2025 (c) Tatsuya Yatagawa
