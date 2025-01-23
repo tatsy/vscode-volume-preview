@@ -1,14 +1,12 @@
-import * as vscode from "vscode";
-import * as path from "path";
-import { VolumeDocument } from "./volumeDocument";
-import { disposeAll, getNonce } from "./utils";
+import * as vscode from 'vscode';
+import * as path from 'path';
+import { VolumeDocument } from './volumeDocument';
+import { disposeAll, getNonce } from './utils';
 
 /**
  * Provider for volume viewer
  */
-export class VolumeViewProvider
-  implements vscode.CustomReadonlyEditorProvider<VolumeDocument>
-{
+export class VolumeViewProvider implements vscode.CustomReadonlyEditorProvider<VolumeDocument> {
   // register to subscriptions
   public static register(context: vscode.ExtensionContext): vscode.Disposable {
     const register = vscode.window.registerCustomEditorProvider(
@@ -25,7 +23,7 @@ export class VolumeViewProvider
   }
 
   // view type name
-  private static readonly viewType = "volview.viewer";
+  private static readonly viewType = 'volview.viewer';
 
   // tracks all known webviews
   private readonly webviews = new WebviewCollection();
@@ -43,7 +41,7 @@ export class VolumeViewProvider
     listeners.push(
       document.onDidChangeDocument((e) => {
         for (const webviewPanel of this.webviews.get(document.uri)) {
-          webviewPanel.webview.postMessage({ type: "update" });
+          webviewPanel.webview.postMessage({ type: 'update' });
         }
       })
     );
@@ -67,17 +65,12 @@ export class VolumeViewProvider
     webviewPanel.webview.options = {
       enableScripts: true,
     };
-    webviewPanel.webview.html = this.getHtmlForWebview(
-      webviewPanel.webview,
-      document
-    );
-    webviewPanel.webview.onDidReceiveMessage((e) =>
-      this.onMessage(document, e)
-    );
+    webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview, document);
+    webviewPanel.webview.onDidReceiveMessage((e) => this.onMessage(document, e));
 
     if (
-      document.uri.scheme == "file" &&
-      vscode.workspace.getConfiguration("volview").get("hotReload", true)
+      document.uri.scheme == 'file' &&
+      vscode.workspace.getConfiguration('volview').get('hotReload', true)
     ) {
       const watcher = vscode.workspace.createFileSystemWatcher(
         document.uri.fsPath,
@@ -86,70 +79,58 @@ export class VolumeViewProvider
         true
       );
       watcher.onDidChange(() => {
-        webviewPanel.webview.postMessage("modelRefresh");
+        webviewPanel.webview.postMessage('modelRefresh');
       });
     }
 
     webviewPanel.webview.onDidReceiveMessage((e) => {
-      if (e.type == "ready") {
-        this.postMessage(webviewPanel, "init", {});
+      if (e.type == 'ready') {
+        this.postMessage(webviewPanel, 'init', {});
       }
     });
   }
 
-  private getMediaWebviewUri(
-    webview: vscode.Webview,
-    mediaPath: string
-  ): vscode.Uri {
+  private getMediaWebviewUri(webview: vscode.Webview, mediaPath: string): vscode.Uri {
     return webview.asWebviewUri(
-      vscode.Uri.joinPath(this._context.extensionUri, "media", mediaPath)
+      vscode.Uri.joinPath(this._context.extensionUri, 'media', mediaPath)
     );
   }
 
   private getSettings(uri: vscode.Uri): string {
-    const config = vscode.workspace.getConfiguration("volview");
+    const config = vscode.workspace.getConfiguration('volview');
     const initData = {
       fileToLoad: uri.toString(),
-      backgroundColor: config.get("backgroundColor", "#0b1447"),
-      defaultColorMap: config.get("defaultColorMap", "viridis"),
-      defaultRenderStyle: config.get("defaultRenderStyle", "mip"),
-      showGridHelper: config.get("showGridHelper", true),
-      showAxesHelper: config.get("showAxesHelper", true),
-      fogDensity: config.get("fogDensity", 0.01),
+      backgroundColor: config.get('backgroundColor', '#0b1447'),
+      defaultColorMap: config.get('defaultColorMap', 'viridis'),
+      defaultRenderStyle: config.get('defaultRenderStyle', 'mip'),
+      showGridHelper: config.get('showGridHelper', true),
+      showAxesHelper: config.get('showAxesHelper', true),
+      fogDensity: config.get('fogDensity', 0.01),
     };
     console.log(initData);
-    const data = JSON.stringify(initData).replace(/"/g, "&quot;");
+    const data = JSON.stringify(initData).replace(/"/g, '&quot;');
     return `<meta id="vscode-volume-data" data-settings="${data}">`;
   }
 
   private getScripts(webview: vscode.Webview, nonce: string): string {
-    const scripts = [this.getMediaWebviewUri(webview, "viewer.js")];
+    const scripts = [this.getMediaWebviewUri(webview, 'viewer.js')];
     return scripts
-      .map(
-        (source) =>
-          `<script nonce="${nonce}" type="module" src="${source}"></script>`
-      )
-      .join("\n");
+      .map((source) => `<script nonce="${nonce}" type="module" src="${source}"></script>`)
+      .join('\n');
   }
 
   /**
    * get the static HTML used in our webviews.
    */
-  private getHtmlForWebview(
-    webview: vscode.Webview,
-    document: VolumeDocument
-  ): string {
+  private getHtmlForWebview(webview: vscode.Webview, document: VolumeDocument): string {
     const fileToLoad =
-      document.uri.scheme === "file"
+      document.uri.scheme === 'file'
         ? webview.asWebviewUri(vscode.Uri.file(document.uri.fsPath))
         : document.uri;
 
-    const threeUri = this.getMediaWebviewUri(
-      webview,
-      "three/three.module.min.js"
-    );
-    const styleUri = this.getMediaWebviewUri(webview, "viewer.css");
-    const mediaUri = this.getMediaWebviewUri(webview, "");
+    const threeUri = this.getMediaWebviewUri(webview, 'three/three.module.min.js');
+    const styleUri = this.getMediaWebviewUri(webview, 'viewer.css');
+    const mediaUri = this.getMediaWebviewUri(webview, '');
     const nonce = getNonce();
     console.log(threeUri);
 
@@ -185,17 +166,13 @@ export class VolumeViewProvider
 
   private readonly _callbacks = new Map<number, (response: any) => void>();
 
-  private postMessage(
-    panel: vscode.WebviewPanel,
-    type: string,
-    body: any
-  ): void {
+  private postMessage(panel: vscode.WebviewPanel, type: string, body: any): void {
     panel.webview.postMessage({ type, body });
   }
 
   private onMessage(document: VolumeDocument, message: any) {
     switch (message.type) {
-      case "response":
+      case 'response':
         const callback = this._callbacks.get(message.requestId);
         callback?.(message.body);
         return;

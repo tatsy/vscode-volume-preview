@@ -1,4 +1,4 @@
-import { Vector2, Vector3 } from "three";
+import { Vector2, Vector3 } from 'three';
 
 /**
  * Shaders to render 3D volumes using raycasting.
@@ -17,7 +17,6 @@ const VolumeRenderShader1 = {
   },
 
   vertexShader: /* glsl */ `
-
 		varying vec4 v_nearpos;
 		varying vec4 v_farpos;
 		varying vec3 v_position;
@@ -49,7 +48,6 @@ const VolumeRenderShader1 = {
 		}`,
 
   fragmentShader: /* glsl */ `
-
 				precision highp float;
 				precision mediump sampler3D;
 

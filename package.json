@@ -3,7 +3,7 @@
   "publisher": "tatsy",
   "displayName": "vscode-volume-preview",
   "description": "VSCode extension for previewing volume data",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "icon": "logo.png",
   "homepage": "https://github.com/tatsy/vscode-volume-preview",
   "repository": {

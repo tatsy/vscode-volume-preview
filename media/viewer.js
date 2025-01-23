@@ -1,10 +1,9 @@
-import * as THREE from "three";
-import { GUI } from "./three/libs/lil-gui.module.min.js";
-import { Stats } from "./three/stats.module.js";
-import { NRRDLoader } from "./three/loaders/NRRDLoader.js";
-import { TrackballControls } from "./three/controls/TrackballControls.js";
-import { OrbitControls } from "./three/controls/OrbitControls.js";
-import { VolumeRenderShader1 } from "./three/shaders/VolumeShader.js";
+import * as THREE from 'three';
+import { GUI } from './three/libs/lil-gui.module.min.js';
+import { NRRDLoader } from './three/loaders/NRRDLoader.js';
+import { TrackballControls } from './three/controls/TrackballControls.js';
+import { VolumeRenderShader1 } from './three/shaders/VolumeShader.js';
+import Stats from './three/libs/stats.module.js';
 
 class Viewer {
   renderer;
@@ -23,9 +22,7 @@ class Viewer {
 
     // parameters
     this.params = JSON.parse(
-      document
-        .getElementById("vscode-volume-data")
-        .getAttribute("data-settings")
+      document.getElementById('vscode-volume-data').getAttribute('data-settings')
     );
     this.params.gridHelper = {
       size: 800,
@@ -40,12 +37,14 @@ class Viewer {
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
+    // stats
+    this.stats = new Stats();
+    this.stats.showPanel(0);
+    document.body.appendChild(this.stats.dom);
+
     // scene
     this.scene = new THREE.Scene();
-    this.scene.fog = new THREE.FogExp2(
-      this.params.backgroundColor,
-      this.params.fogDensity
-    );
+    this.scene.fog = new THREE.FogExp2(this.params.backgroundColor, this.params.fogDensity);
     this.scene.background = new THREE.Color(this.params.backgroundColor);
 
     // camera
@@ -79,85 +78,73 @@ class Viewer {
 
     // colormap textures
     this.cmapTextures = {
-      gray: new THREE.TextureLoader().load("three/textures/cm_gray.png"),
-      viridis: new THREE.TextureLoader().load("three/textures/cm_viridis.png"),
-      magma: new THREE.TextureLoader().load("three/textures/cm_magma.png"),
-      inferno: new THREE.TextureLoader().load("three/textures/cm_inferno.png"),
-      plasma: new THREE.TextureLoader().load("three/textures/cm_plasma.png"),
-      cividis: new THREE.TextureLoader().load("three/textures/cm_cividis.png"),
+      gray: new THREE.TextureLoader().load('three/textures/cm_gray.png'),
+      viridis: new THREE.TextureLoader().load('three/textures/cm_viridis.png'),
+      magma: new THREE.TextureLoader().load('three/textures/cm_magma.png'),
+      inferno: new THREE.TextureLoader().load('three/textures/cm_inferno.png'),
+      plasma: new THREE.TextureLoader().load('three/textures/cm_plasma.png'),
+      cividis: new THREE.TextureLoader().load('three/textures/cm_cividis.png'),
     };
 
     // GUI
     this.gui = new GUI();
 
-    const renderFolder = this.gui.addFolder("Rendering");
+    const renderFolder = this.gui.addFolder('Rendering');
     renderFolder.open();
     renderFolder
-      .add(this.volumeConfig, "clim1", 0, 1, 0.01)
-      .name("color limit[0]")
+      .add(this.volumeConfig, 'clim1', 0, 1, 0.01)
+      .name('color limit[0]')
       .onChange(() => this.updateUniforms());
     renderFolder
-      .add(this.volumeConfig, "clim2", 0, 1, 0.01)
-      .name("color limit[1]")
+      .add(this.volumeConfig, 'clim2', 0, 1, 0.01)
+      .name('color limit[1]')
       .onChange(() => this.updateUniforms());
     renderFolder
-      .add(this.volumeConfig, "colormap", {
-        gray: "gray",
-        viridis: "viridis",
-        inferno: "inferno",
-        plasma: "plasma",
-        magma: "magma",
-        cividis: "cividis",
+      .add(this.volumeConfig, 'colormap', {
+        gray: 'gray',
+        viridis: 'viridis',
+        inferno: 'inferno',
+        plasma: 'plasma',
+        magma: 'magma',
+        cividis: 'cividis',
       })
       .onChange(() => this.updateUniforms());
     renderFolder
-      .add(this.volumeConfig, "renderstyle", {
-        mip: "mip",
-        iso: "iso",
+      .add(this.volumeConfig, 'renderstyle', {
+        mip: 'mip',
+        iso: 'iso',
       })
       .onChange(() => this.updateUniforms());
     renderFolder
-      .add(this.volumeConfig, "isothreshold", 0, 1, 0.01)
+      .add(this.volumeConfig, 'isothreshold', 0, 1, 0.01)
       .onChange(() => this.updateUniforms());
 
-    const helperFolder = this.gui.addFolder("Helpers");
+    const helperFolder = this.gui.addFolder('Helpers');
     helperFolder.open();
     helperFolder
-      .add(this.params, "showAxesHelper")
-      .name("show axes helper")
+      .add(this.params, 'showAxesHelper')
+      .name('show axes helper')
       .onChange(() => this.updateHelpers());
     helperFolder
-      .add(this.params, "showGridHelper")
-      .name("show grid helper")
+      .add(this.params, 'showGridHelper')
+      .name('show grid helper')
       .onChange(() => this.updateHelpers());
     helperFolder
-      .add(this.params.gridHelper, "size")
-      .name("size")
+      .add(this.params.gridHelper, 'size')
+      .name('size')
       .onChange(() => this.updateHelpers());
     helperFolder
-      .add(this.params.gridHelper, "unit")
-      .name("unit")
+      .add(this.params.gridHelper, 'unit')
+      .name('unit')
       .onChange(() => this.updateHelpers());
 
     // add components to DOM
     document.body.appendChild(this.renderer.domElement);
-    window.addEventListener("resize", this.onWindowResize.bind(this), false);
+    window.addEventListener('resize', this.onWindowResize.bind(this), false);
 
     // load volume
     this.setVolume(this.params.fileToLoad);
   }
-
-  // initGui() {
-  //   const extent = Math.max(
-  //     this.volumeSize.x,
-  //     this.volumeSize.y,
-  //     this.volumeSize.z
-  //   );
-
-  //   const gridUnit = Math.pow(10, Math.floor(Math.log10(extent)));
-  //   this.params.gridHelper.unit = gridUnit;
-  //   this.params.gridHelper.size = this.params.gridHelper.unit * 100;
-  // }
 
   updateHelpers() {
     // Remove current helpers
@@ -179,19 +166,14 @@ class Viewer {
         this.gridHelper.size !== size ||
         this.gridHelper.divisions !== divisions
       ) {
-        const colorCenterLine = new THREE.Color("#888888");
-        const colorGrid = new THREE.Color("#888888");
-        this.gridHelper = new THREE.GridHelper(
-          size,
-          divisions,
-          colorCenterLine,
-          colorGrid
-        );
+        const colorCenterLine = new THREE.Color('#888888');
+        const colorGrid = new THREE.Color('#888888');
+        this.gridHelper = new THREE.GridHelper(size, divisions, colorCenterLine, colorGrid);
         this.gridHelper.position.x += this.volumeSize.x * 0.5;
         this.gridHelper.position.y += this.volumeSize.y * 0.5;
         this.gridHelper.position.z += this.volumeSize.z * 0.5;
         this.gridHelper.material.linewidth = 10;
-        this.gridHelper.name = "gridHelper";
+        this.gridHelper.name = 'gridHelper';
       }
 
       this.scene.add(this.gridHelper);
@@ -199,11 +181,7 @@ class Viewer {
 
     // Axis helper
     if (this.params.showAxesHelper) {
-      const minValue = Math.min(
-        this.volumeSize.x,
-        this.volumeSize.y,
-        this.volumeSize.z
-      );
+      const minValue = Math.min(this.volumeSize.x, this.volumeSize.y, this.volumeSize.z);
 
       if (this.axisHelper === null) {
         this.axesHelper = new THREE.AxesHelper(minValue);
@@ -212,18 +190,19 @@ class Viewer {
         this.axesHelper.position.y += this.volumeSize.y * 0.5;
         this.axesHelper.position.z += this.volumeSize.z * 0.5;
         this.axesHelper.material.linewidth = 10;
-        this.axesHelper.name = "axesHelper";
+        this.axesHelper.name = 'axesHelper';
       }
 
       this.scene.add(this.axesHelper);
     }
-
-    // Display
-    this.render();
   }
 
-  render() {
+  mainloop() {
+    this.stats.begin();
+    requestAnimationFrame(this.mainloop.bind(this));
     this.renderer.render(this.scene, this.camera);
+    this.controls.update();
+    this.stats.end();
   }
 
   onWindowResize() {
@@ -233,7 +212,6 @@ class Viewer {
     this.camera.right = (frustumHeight * aspect) / 2;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.render();
   }
 
   updateCamera() {
@@ -241,28 +219,20 @@ class Viewer {
     const h = this.volumeSize.y;
     const d = this.volumeSize.z;
     const camTarget = new THREE.Vector3(w / 2, h / 2, d / 2);
-    const camPos = new THREE.Vector3(w / 2, h * 1.5, d / 2);
+    const camPos = new THREE.Vector3(w * 1.5, h * 1.5, -d * 1.0);
 
     this.camera.position.copy(camPos);
     this.camera.up.set(0, 0, -1);
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls = new TrackballControls(this.camera, this.renderer.domElement);
+    this.controls.rotateSpeed = 2.0;
     this.controls.target = camTarget;
-    this.controls.addEventListener("change", () => this.render());
-    this.controls.update();
   }
 
   updateUniforms() {
-    this.material.uniforms["u_clim"].value.set(
-      this.volumeConfig.clim1,
-      this.volumeConfig.clim2
-    );
-    this.material.uniforms["u_renderstyle"].value =
-      this.volumeConfig.renderstyle == "mip" ? 0 : 1; // 0: MIP, 1: ISO
-    this.material.uniforms["u_renderthreshold"].value =
-      this.volumeConfig.isothreshold; // For ISO renderstyle
-    this.material.uniforms["u_cmdata"].value =
-      this.cmapTextures[this.volumeConfig.colormap];
-    this.render();
+    this.material.uniforms['u_clim'].value.set(this.volumeConfig.clim1, this.volumeConfig.clim2);
+    this.material.uniforms['u_renderstyle'].value = this.volumeConfig.renderstyle == 'mip' ? 0 : 1; // 0: MIP, 1: ISO
+    this.material.uniforms['u_renderthreshold'].value = this.volumeConfig.isothreshold; // For ISO renderstyle
+    this.material.uniforms['u_cmdata'].value = this.cmapTextures[this.volumeConfig.colormap];
   }
 
   setVolume(fileToLoad) {
@@ -302,29 +272,16 @@ class Viewer {
       texture.needsUpdate = true;
 
       // Material
-      self.material.uniforms["u_data"].value = texture;
-      self.material.uniforms["u_size"].value.set(
-        volume.xLength,
-        volume.yLength,
-        volume.zLength
-      );
-      self.material.uniforms["u_clim"].value.set(
-        self.volumeConfig.clim1,
-        self.volumeConfig.clim2
-      );
-      self.material.uniforms["u_renderstyle"].value =
-        self.volumeConfig.renderstyle == "mip" ? 0 : 1; // 0: MIP, 1: ISO
-      self.material.uniforms["u_renderthreshold"].value =
-        self.volumeConfig.isothreshold; // For ISO renderstyle
-      self.material.uniforms["u_cmdata"].value =
-        self.cmapTextures[self.volumeConfig.colormap];
+      self.material.uniforms['u_data'].value = texture;
+      self.material.uniforms['u_size'].value.set(volume.xLength, volume.yLength, volume.zLength);
+      self.material.uniforms['u_clim'].value.set(self.volumeConfig.clim1, self.volumeConfig.clim2);
+      self.material.uniforms['u_renderstyle'].value =
+        self.volumeConfig.renderstyle == 'mip' ? 0 : 1; // 0: MIP, 1: ISO
+      self.material.uniforms['u_renderthreshold'].value = self.volumeConfig.isothreshold; // For ISO renderstyle
+      self.material.uniforms['u_cmdata'].value = self.cmapTextures[self.volumeConfig.colormap];
 
       // THREE.Mesh
-      const geometry = new THREE.BoxGeometry(
-        volume.xLength,
-        volume.yLength,
-        volume.zLength
-      );
+      const geometry = new THREE.BoxGeometry(volume.xLength, volume.yLength, volume.zLength);
       geometry.translate(
         volume.xLength / 2 - 0.5,
         volume.yLength / 2 - 0.5,
@@ -337,7 +294,7 @@ class Viewer {
       // rendering
       self.updateCamera();
       self.updateHelpers();
-      self.render();
+      self.mainloop();
     });
   }
 }
